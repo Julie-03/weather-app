@@ -1,4 +1,4 @@
-const API_KEY = process.env.OPENWEATHER_API_KEY; // Replace with your actual API key
+const API_KEY = process.env.OPENWEATHER_API_KEY; 
 
 document.getElementById('search-btn').addEventListener('click', () => {
     const city = document.getElementById('city-input').value.trim();
