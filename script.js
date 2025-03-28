@@ -1,4 +1,5 @@
 const API_KEY = process.env.OPENWEATHER_API_KEY; 
+let serverHistory = [];
 
 document.getElementById('search-btn').addEventListener('click', () => {
     const city = document.getElementById('city-input').value.trim();
@@ -16,7 +17,14 @@ async function getWeather(city) {
             `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
         );
         const data = await response.json();
+
+        const serverId = response.headers.get('X-Backend-Server') || "Unknown";
         
+        serverHistory.push(serverId);
+        if (serverHistory.length > 5) serverHistory.shift();
+        
+        updateServerIndicator(serverId, serverHistory);
+
         if (data.cod === 200) {
             displayWeather(data);
         } else {
@@ -30,6 +38,31 @@ async function getWeather(city) {
             </div>
         `;
     }
+}
+
+function updateServerIndicator(currentServer, history) {
+    const oldIndicator = document.getElementById('server-indicator');
+    if (oldIndicator) oldIndicator.remove();
+    
+    document.body.insertAdjacentHTML(
+        'beforeend',
+        `<div id="server-indicator" style="
+            position: fixed; 
+            bottom: 0; 
+            right: 0; 
+            background: black; 
+            color: white; 
+            padding: 10px;
+            font-family: monospace;
+            border-top-left-radius: 5px;
+            z-index: 1000;
+        ">
+            <div><strong>Current Server:</strong> ${currentServer}</div>
+            <div style="font-size: 0.8em; margin-top: 5px; opacity: 0.8;">
+                <strong>Last Servers:</strong> ${history.join(' → ')}
+            </div>
+        </div>`
+    );
 }
 
 function displayWeather(data) {
