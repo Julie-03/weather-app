@@ -108,4 +108,8 @@ function getWeatherIcon(weatherCondition) {
         'Fog': '🌁'
     };
     return icons[weatherCondition] || '🌈';
+    document.addEventListener('DOMContentLoaded', () => {
+        updateServerIndicator("TEST_SERVER", ["Web01", "Web02"]);
+        console.log("Test indicator should be visible");
+    });   
 }
