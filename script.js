@@ -1,11 +1,34 @@
-const API_KEY = process.env.OPENWEATHER_API_KEY; 
-let serverHistory = [];
+const API_KEY = 'ee2c3849e76fde570c395d8db35d7d4f';
+let serverHistory = []; // Track server rotation
+
+// Server indicator functions
+function updateServerIndicator(currentServer, history) {
+    let indicator = document.getElementById('server-indicator');
+    if (!indicator) {
+        indicator = document.createElement('div');
+        indicator.id = 'server-indicator';
+        document.body.appendChild(indicator);
+    }
+    indicator.innerHTML = `
+        <div><strong>Current Server:</strong> ${currentServer}</div>
+        <div style="font-size:0.8em"><strong>Last Servers:</strong> ${history.join(' → ')}</div>
+    `;
+    indicator.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-family: sans-serif;
+        z-index: 9999;
+    `;
+}
 
 document.getElementById('search-btn').addEventListener('click', () => {
     const city = document.getElementById('city-input').value.trim();
-    if (city) {
-        getWeather(city);
-    }
+    if (city) getWeather(city);
 });
 
 async function getWeather(city) {
@@ -18,11 +41,10 @@ async function getWeather(city) {
         );
         const data = await response.json();
 
+        // Server identification
         const serverId = response.headers.get('X-Backend-Server') || "Unknown";
-        
         serverHistory.push(serverId);
         if (serverHistory.length > 5) serverHistory.shift();
-        
         updateServerIndicator(serverId, serverHistory);
 
         if (data.cod === 200) {
@@ -38,31 +60,6 @@ async function getWeather(city) {
             </div>
         `;
     }
-}
-
-function updateServerIndicator(currentServer, history) {
-    const oldIndicator = document.getElementById('server-indicator');
-    if (oldIndicator) oldIndicator.remove();
-    
-    document.body.insertAdjacentHTML(
-        'beforeend',
-        `<div id="server-indicator" style="
-            position: fixed; 
-            bottom: 0; 
-            right: 0; 
-            background: black; 
-            color: white; 
-            padding: 10px;
-            font-family: monospace;
-            border-top-left-radius: 5px;
-            z-index: 1000;
-        ">
-            <div><strong>Current Server:</strong> ${currentServer}</div>
-            <div style="font-size: 0.8em; margin-top: 5px; opacity: 0.8;">
-                <strong>Last Servers:</strong> ${history.join(' → ')}
-            </div>
-        </div>`
-    );
 }
 
 function displayWeather(data) {
@@ -108,8 +105,7 @@ function getWeatherIcon(weatherCondition) {
         'Fog': '🌁'
     };
     return icons[weatherCondition] || '🌈';
-    document.addEventListener('DOMContentLoaded', () => {
-        updateServerIndicator("TEST_SERVER", ["Web01", "Web02"]);
-        console.log("Test indicator should be visible");
-    });   
 }
+
+// Initial test
+updateServerIndicator("TEST", ["Web01", "Web02"]);
