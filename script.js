@@ -33,6 +33,7 @@ async function getWeather(city) {
         
         const serverHeader = response.headers.get('X-Backend-Server') || "Unknown";
         console.log(`Backend Server: ${serverHeader}`);
+        updateServerIndicator(serverHeader);  
         
         const data = await response.json();
         if (data.cod === 200) {
@@ -51,6 +52,12 @@ async function getWeather(city) {
     }
 }
 
+function updateServerIndicator(server) {
+    const serverIndicator = document.getElementById('server-indicator');
+    if (serverIndicator) {
+        serverIndicator.innerHTML = `🌍 Server: ${server}`;
+    }
+}
 
 function displayWeather(data) {
     const weatherIcon = getWeatherIcon(data.weather[0].main);
@@ -81,6 +88,7 @@ function displayWeather(data) {
     `;
 }
 
+
 function getWeatherIcon(weatherCondition) {
     const icons = {
         'Clear': '☀️',
@@ -97,5 +105,5 @@ function getWeatherIcon(weatherCondition) {
     return icons[weatherCondition] || '🌈';
 }
 
-// Initial test
-updateServerIndicator("TEST", ["Web01", "Web02"]);
+
+
