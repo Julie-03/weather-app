@@ -1,4 +1,4 @@
-const API_KEY = process.env.OPENWEATHER_API_KEY; 
+const API_KEY = "ee2c3849e76fde570c395d8db35d7d4f"; 
 let requestCount = 0;
 
 document.getElementById('search-btn').addEventListener('click', () => {
